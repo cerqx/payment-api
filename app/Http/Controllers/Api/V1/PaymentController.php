@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\PaymentResource;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -12,7 +14,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        return PaymentResource::collection(Payment::with('user')->get());
     }
 
     /**
@@ -36,7 +38,7 @@ class PaymentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return new PaymentResource(Payment::where('id', $id)->first());
     }
 
     /**

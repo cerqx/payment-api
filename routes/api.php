@@ -7,4 +7,9 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::get('/users', [\App\Http\Controllers\Api\V1\UserController::class, 'index']);
+Route::prefix('v1')->group(function() {
+    Route::get('/users', [\App\Http\Controllers\Api\V1\UserController::class, 'index']);
+    Route::get('/users/{userId}', [\App\Http\Controllers\Api\V1\UserController::class, 'show']);
+    Route::get('/payments', [\App\Http\Controllers\Api\V1\PaymentController::class, 'index']);
+    Route::get('/payments/{paymentId}', [\App\Http\Controllers\Api\V1\PaymentController::class, 'show']);
+});
