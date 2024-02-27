@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\PaymentResource;
 use App\Models\Payment;
+use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      */
@@ -18,19 +21,29 @@ class PaymentController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'type' => 'required|max:1',
+            'paid' => 'required|numeric|between:0,1',
+            'payment_date' => 'nullable',
+            'value' => 'required|numeric',
+        ]);
+
+        if($validator->fails()) {
+            return $this->error('Invalid data', 422, $validator->errors()->messages());
+        }
+
+        $created = Payment::create($validator->validated());
+
+        if($created) {
+            return $this->success('Payment created', 200, $created);
+        }
+
+        return $this->error('Payment not created', 400);
     }
 
     /**
@@ -39,14 +52,6 @@ class PaymentController extends Controller
     public function show(string $id)
     {
         return new PaymentResource(Payment::where('id', $id)->first());
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
