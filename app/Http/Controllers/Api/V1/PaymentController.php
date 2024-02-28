@@ -40,7 +40,7 @@ class PaymentController extends Controller
         $created = Payment::create($validator->validated());
 
         if($created) {
-            return $this->success('Payment created', 200, $created);
+            return $this->success('Payment created', 200, new PaymentResource($created->load('user')));
         }
 
         return $this->error('Payment not created', 400);
